@@ -9,14 +9,12 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt()
-
+  dateOfRegistration DateTime @default(now())
 
   name String
   secondName String
   email String @unique
-  date String
+  dateOfBirth DateTime @default(now())
 
   @@map("users")
 }

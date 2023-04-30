@@ -11,10 +11,10 @@ export class UserService {
     return users;
   }
 
-  async getByEmail(email: string) {
-    const user = await this.prisma.user.findFirst({
+  async getById(id: number) {
+    const user = await this.prisma.user.findUnique({
       where: {
-        email,
+        id,
       },
     });
 
@@ -32,7 +32,7 @@ export class UserService {
           name: dto.name,
           secondName: dto.secondName,
           email: dto.email,
-          date: dto.date,
+          dateOfBirth: dto.dateOfBirth,
         },
       });
 
@@ -47,7 +47,10 @@ export class UserService {
     }
   }
 
-  async editUser() {
-    return 'you are changing user';
+  async editUser(dto: Partial<UserDto>) {
+    return await this.prisma.user.update({
+      where: { email: dto.email },
+      data: dto,
+    });
   }
 }

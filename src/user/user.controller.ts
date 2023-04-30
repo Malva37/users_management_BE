@@ -1,5 +1,5 @@
 import { UserDto } from './dto/user.dto';
-import { Body, Param, Controller, Get, Patch, Post } from '@nestjs/common';
+import { Body, Param, Controller, Get, Post, Put } from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller('users')
@@ -11,11 +11,10 @@ export class UserController {
     return this.userService.getUsers();
   }
 
-  @Get('')
-  getOneUser(@Param('email') email: string) {
-    console.log(email);
-    console.log('-------------------get by email-------------------');
-    return this.userService.getByEmail(email);
+  @Get(':id')
+  getOneUser(@Param('id') id: number) {
+    console.log('-------------------get by id-------------------');
+    return this.userService.getById(id);
   }
 
   @Post('')
@@ -24,9 +23,11 @@ export class UserController {
     return this.userService.addUser(dto);
   }
 
-  @Patch('')
-  editUser() {
+  @Put('{id}')
+  editUser(@Param('{id}') id: number, @Body() dto: Partial<UserDto>) {
     console.log('-------------------update-------------------');
-    return this.userService.editUser();
+    const user = this.userService.editUser(dto);
+    console.log(user);
+    return user;
   }
 }
