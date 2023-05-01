@@ -1,7 +1,6 @@
 import { UserDto } from './dto/user.dto';
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class UserService {
@@ -18,39 +17,32 @@ export class UserService {
       },
     });
 
-    if (!user) {
-      throw new ForbiddenException('Credentials incorrect');
-    }
-
     return user;
   }
 
   async addUser(dto: UserDto) {
-    try {
-      const user = await this.prisma.user.create({
-        data: {
-          name: dto.name,
-          secondName: dto.secondName,
-          email: dto.email,
-          dateOfBirth: dto.dateOfBirth,
-        },
-      });
+    const user = await this.prisma.user.create({
+      data: {
+        name: dto.name,
+        secondName: dto.secondName,
+        email: dto.email,
+        dateOfBirth: dto.dateOfBirth,
+      },
+    });
 
-      return user;
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ForbiddenException('Credentials taken');
-        }
-      }
-      throw error;
-    }
+    return user;
   }
 
-  async editUser(dto: Partial<UserDto>) {
+  async editUser(id, dto: UserDto) {
     return await this.prisma.user.update({
-      where: { email: dto.email },
+      where: { id },
       data: dto,
+    });
+  }
+
+  async deleteUser(id: number) {
+    return await this.prisma.user.delete({
+      where: { id },
     });
   }
 }
